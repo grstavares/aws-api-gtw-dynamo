@@ -144,9 +144,7 @@ paths:
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: "#/components/schemas/todo"
+                $ref: "#/components/schemas/todo"
         "400":
           description: Operation not successful
           content:
@@ -187,11 +185,11 @@ paths:
                 #set($inputRoot = $input.path("$"))
 
                 #if($inputRoot.toString().contains("Item"))
-                    [{
+                    {
                         "id": "$inputRoot.Item.id.S",
                         "title": "$inputRoot.Item.title.S",
                         "description": "$inputRoot.Item.description.S"
-                    }]
+                    }
                 #else
                     #set($context.responseOverride.status = 404)
                 #end
