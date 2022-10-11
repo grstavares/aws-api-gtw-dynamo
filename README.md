@@ -41,3 +41,32 @@ For a detailed API description, please copy the content of the attached [openapi
 
 - Delete existing To-Do object
   - DELETE: /v1/todo/{id}
+
+## Deployment Instructions
+
+### Deployment Requirements
+
+- AWS AWS Account.
+- An AWS user/role with permissions listed in the file [TO-DO](./permissions.json).
+- An AWS Bucket (preferable in the region that the deployment will be performed).
+- AWS installed in a local machine.
+
+### Deployment Steps
+
+- clone this repository in your local machine.
+- configure the aws cli to use the user/role with the permissions informed above
+- in your local machine, export the variable `bucket` with the bucket that will be used during the deployment
+- in your local machine, export the variable `stackname` with the name to be used during the stack creation.
+- run the script `./deploy.sh`
+- the script will print the `url` to be used to test the challenge.
+
+## Change Log
+
+- [c3c32d0](https://github.com/grstavares/SDA/commit/c3c32d02eda4f5fdaf7476ba560a83356d2aa29a): Add Challenge Files to Repo
+- [dc3b30b](https://github.com/grstavares/SDA/commit/dc3b30b927dc9dcab6e8428a3708877e877966ae): Adjust Path Prefix (\*1)
+- [efc527b](https://github.com/grstavares/SDA/commit/efc527bf7d3962ab4d442c650a46d544f75c25f8): Add Cloudformation Deployment Files
+
+(\*1): The specification requires that the paths are prefixed with the `v1` resource path.  
+The AWS API Gateway supports versioning in what is called a [`Stage`](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-stages.html).  
+The `Stage` is also a required component for AWS API Gateway REST apis.  
+For that reason, we removed the `v1` prefix from the `OpenAPI` definition and used it as part of the REST API resource definition at [resources.yaml](https://github.com/grstavares/SDA/blob/d6c7e2784f12fd40706d0282c1c81c27d58db033/resources.yaml#L52).
