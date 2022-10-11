@@ -1,8 +1,7 @@
 openapi: 3.0.1
 info:
   title: To-Do API
-  description: >-
-    The To-Do API manages a To-Do list.
+  description: The To-Do API manages a To-Do list.
   version: 1.0.0
 servers:
   - url: <AWS_API_URL>
@@ -23,13 +22,48 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/To-Do"
+                  $ref: "#/components/schemas/todo"
         "400":
           description: Operation not successful
           content:
             application/json:
               example:
                 error: There was an error loading the To-Do objects.
+      x-amazon-apigateway-integration:
+        description: Retrieve all To-Dos from the database
+        credentials: { "Fn::GetAtt": APIRole.Arn }
+        uri:
+          {
+            "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:dynamodb:action/Scan",
+          }
+        requestTemplates:
+          application/json:
+            Fn::Sub:
+              - |-
+                {
+                  "TableName": "${tableName}"
+                }
+              - { tableName: { Ref: Table } }
+        responses:
+          default:
+            statusCode: 200
+            responseTemplates:
+              application/json: '
+              #set($inputRoot = $input.path("$"))
+              [
+                #foreach($elem in $inputRoot.Items)
+                    {
+                    "id": "$elem.id.S",
+                    "title": "$elem.title.S",
+                    "description": "$elem.description.S",
+                    }
+                    #if($foreach.hasNext),#end
+                #end
+              ]'
+        passthroughBehavior: "when_no_match"
+        httpMethod: POST
+        type: AWS
+
     put:
       tags:
         - To-Do Handler
@@ -39,7 +73,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/To-Do"
+              $ref: "#/components/schemas/todo"
         required: false
       responses:
         "200":
@@ -54,6 +88,44 @@ paths:
             application/json:
               example:
                 error: There was an error while updating the To-Do object.
+      x-amazon-apigateway-integration:
+        description: Add a new To-Do Item to the database
+        credentials: { "Fn::GetAtt": APIRole.Arn }
+        uri:
+          {
+            "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:dynamodb:action/PutItem",
+          }
+        requestTemplates:
+          application/json:
+            Fn::Sub:
+              - |-
+                { 
+                  "TableName": "${tableName}",
+                  "Item": {
+                    "id": {
+                      "S": "$input.path("$.id")"
+                    },
+                    "title": {
+                      "S": "$input.path("$.title")"
+                    },
+                    "description": {
+                      "S": "$input.path("$.description")"
+                    }
+                  }
+                }
+              - { tableName: { Ref: Table } }
+        responses:
+          default:
+            statusCode: 200
+            responseTemplates:
+              application/json: '#set($inputRoot = $input.path("$"))
+                {
+                "id": "$context.requestId"
+                }'
+        passthroughBehavior: "when_no_match"
+        httpMethod: POST
+        type: AWS
+
   /todo/{todo_id}:
     get:
       tags:
@@ -74,13 +146,47 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: "#/components/schemas/To-Do"
+                  $ref: "#/components/schemas/todo"
         "400":
           description: Operation not successful
           content:
             application/json:
               example:
                 error: There was an error loading the To-Do objects.
+      x-amazon-apigateway-integration:
+        description: Retrieve a specific To-Do Item from the database
+        credentials: { "Fn::GetAtt": APIRole.Arn }
+        uri:
+          {
+            "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:dynamodb:action/GetItem",
+          }
+        requestTemplates:
+          application/json:
+            Fn::Sub:
+              - |-
+                { 
+                  "TableName": "${tableName}",
+                  "Key": {
+                          "id": {
+                            "S": "$input.params("todo_id")"
+                          }
+                        }
+                }
+              - { tableName: { Ref: Table } }
+        responses:
+          default:
+            statusCode: 200
+            responseTemplates:
+              application/json: '#set($inputRoot = $input.path("$"))
+                [{
+                "id": "$inputRoot.Item.id.S",
+                "title": "$inputRoot.Item.title.S",
+                "description": "$inputRoot.Item.description.S"
+                }]'
+        passthroughBehavior: "when_no_match"
+        httpMethod: POST
+        type: AWS
+
     put:
       tags:
         - To-Do Handler
@@ -96,7 +202,7 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/To-Do"
+              $ref: "#/components/schemas/todo"
         required: false
       responses:
         "200":
@@ -111,6 +217,50 @@ paths:
             application/json:
               example:
                 error: There was an error while creating a new To-Do object.
+      x-amazon-apigateway-integration:
+        description: Update a specific To-Do Item
+        credentials: { "Fn::GetAtt": APIRole.Arn }
+        uri:
+          {
+            "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:dynamodb:action/UpdateItem",
+          }
+        requestTemplates:
+          application/json:
+            Fn::Sub:
+              - |-
+                { 
+                  "TableName": "${tableName}",
+                  "Key": {
+                          "id": {
+                            "S": "$input.params("todo_id")"
+                          }
+                        },
+                  "ExpressionAttributeValues": {
+                    ":m": {"S": "$input.path("$.title")"},
+                    ":n": {"S": "$input.path("$.description")"}
+                  },
+                  "ExpressionAttributeNames": {
+                    "#m": "title",
+                    "#n": "description"
+                  },
+                  "UpdateExpression": "SET #m = :m, #n = :n",
+                  "ReturnValues": "ALL_NEW"
+                }
+              - { tableName: { Ref: Table } }
+        responses:
+          default:
+            statusCode: 200
+            responseTemplates:
+              application/json: '#set($inputRoot = $input.path("$"))
+                {
+                "id": "$inputRoot.Attributes.id.S",
+                "title": "$inputRoot.Attributes.title.S",
+                "description": "$inputRoot.Attributes.description.S"
+                }'
+        passthroughBehavior: "when_no_match"
+        httpMethod: POST
+        type: AWS
+
     delete:
       tags:
         - To-Do Handler
@@ -135,9 +285,44 @@ paths:
             application/json:
               example:
                 error: There has been an error while deleting the To-Do object.
+      x-amazon-apigateway-integration:
+        description: Delete a specific To-Do Item from the database
+        credentials: { "Fn::GetAtt": APIRole.Arn }
+        uri:
+          {
+            "Fn::Sub": "arn:aws:apigateway:${AWS::Region}:dynamodb:action/DeleteItem",
+          }
+        requestTemplates:
+          application/json:
+            Fn::Sub:
+              - |-
+                {
+                  "TableName": "${tableName}",
+                    "Key": {
+                      "id": {
+                        "S": "$input.params("todo_id")"
+                      }
+                    },
+                  "ReturnValues": "ALL_OLD"
+                }
+              - { tableName: { Ref: Table } }
+        responses:
+          default:
+            statusCode: 200
+            responseTemplates:
+              application/json: '#set($inputRoot = $input.path("$"))
+                {
+                "id": "$inputRoot.Attributes.id.S",
+                "title": "$inputRoot.Attributes.title.S",
+                "description": "$inputRoot.Attributes.description.S"
+                }'
+        passthroughBehavior: "when_no_match"
+        httpMethod: POST
+        type: AWS
+
 components:
   schemas:
-    To-Do:
+    todo:
       required:
         - id
         - title
