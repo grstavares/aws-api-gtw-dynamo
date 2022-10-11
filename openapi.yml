@@ -9,7 +9,7 @@ servers:
 tags:
   - name: To-Do Handler
 paths:
-  /v1/todo:
+  /todo:
     get:
       tags:
         - To-Do Handler
@@ -54,7 +54,7 @@ paths:
             application/json:
               example:
                 error: There was an error while updating the To-Do object.
-  /v1/todo/{todo_id}:
+  /todo/{todo_id}:
     get:
       tags:
         - To-Do Handler
