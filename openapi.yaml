@@ -153,6 +153,12 @@ paths:
             application/json:
               example:
                 error: There was an error loading the To-Do objects.
+        "404":
+          description: Operation not successful
+          content:
+            application/json:
+              example:
+                error: To-Do object not found.
       x-amazon-apigateway-integration:
         description: Retrieve a specific To-Do Item from the database
         credentials: { "Fn::GetAtt": APIRole.Arn }
@@ -177,12 +183,19 @@ paths:
           default:
             statusCode: 200
             responseTemplates:
-              application/json: '#set($inputRoot = $input.path("$"))
-                [{
-                "id": "$inputRoot.Item.id.S",
-                "title": "$inputRoot.Item.title.S",
-                "description": "$inputRoot.Item.description.S"
-                }]'
+              application/json: '
+                #set($inputRoot = $input.path("$"))
+
+                #if($inputRoot.toString().contains("Item"))
+                    [{
+                        "id": "$inputRoot.Item.id.S",
+                        "title": "$inputRoot.Item.title.S",
+                        "description": "$inputRoot.Item.description.S"
+                    }]
+                #else
+                    #set($context.responseOverride.status = 404)
+                #end
+              '
         passthroughBehavior: "when_no_match"
         httpMethod: POST
         type: AWS
