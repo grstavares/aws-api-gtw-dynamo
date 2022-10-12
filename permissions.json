@@ -1,0 +1,56 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "AllowListS3Buckets",
+            "Effect": "Allow",
+            "Action": "s3:ListAllMyBuckets",
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowCloudFormationStackCreationUpdate",
+            "Effect": "Allow",
+            "Action": [
+                "cloudformation:DescribeStacks",
+                "cloudformation:DescribeChangeSet",
+                "cloudformation:CreateChangeSet",
+                "cloudformation:ExecuteChangeSet",
+                "cloudformation:GetTemplateSummary"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowDynamoDBTableCreationUpdate",
+            "Effect": "Allow",
+            "Action": ["dynamodb:DescribeTable", "dynamodb:CreateTable", "dynamodb:DeleteTable"],
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowAPIGatewayCreationUpdate",
+            "Effect": "Allow",
+            "Action": ["apigateway:GET", "apigateway:POST", "apigateway:PUT", "apigateway:PATCH", "apigateway:DELETE"],
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowAPIGatewayRoleCreationUpdate",
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetRole",
+                "iam:CreateRole",
+                "iam:DeleteRole",
+                "iam:PutRolePolicy",
+                "iam:CreateServiceLinkedRole",
+                "iam:DeleteRolePolicy",
+                "iam:GetRolePolicy",
+                "iam:PassRole"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "AllowTemplateUpload",
+            "Effect": "Allow",
+            "Action": ["s3:GetObject", "s3:PutObject"],
+            "Resource": "arn:aws:s3:::cftemplates.tavares.cloud/*"
+        }
+    ]
+}
