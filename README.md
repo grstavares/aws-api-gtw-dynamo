@@ -47,7 +47,7 @@ For a detailed API description, please copy the content of the attached [openapi
 ### Deployment Requirements
 
 - AWS AWS Account.
-- An AWS user/role with permissions listed in the file [TO-DO](./permissions.json).
+- An AWS user/role with permissions listed in the file [permissions.json](./permissions.json).
 - An AWS Bucket (preferable in the region that the deployment will be performed).
 - AWS installed in a local machine.
 
