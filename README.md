@@ -66,6 +66,7 @@ For a detailed API description, please copy the content of the attached [openapi
 - [dc3b30b](https://github.com/grstavares/SDA/commit/dc3b30b927dc9dcab6e8428a3708877e877966ae): Adjust Path Prefix (\*1)
 - [efc527b](https://github.com/grstavares/SDA/commit/efc527bf7d3962ab4d442c650a46d544f75c25f8): Add Cloudformation Deployment Files
 - [5d1f978](5d1f9786181ff9878179f69d95f0f5db67b48bad): Return 404 response when the record is not found.
+- [6dbff96](https://github.com/grstavares/SDA/commit/6dbff96ff885e72b0dc28cd8238047483c4b1fff): Add deployment permissions requirements.
 
 (\*1): The specification requires that the paths are prefixed with the `v1` resource path.  
 The AWS API Gateway supports versioning in what is called a [`Stage`](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-stages.html).  
