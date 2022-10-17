@@ -47,7 +47,7 @@ For a detailed API description, open the [openapi.yaml](./openapi.yaml) file on 
 - AWS AWS Account.
 - An AWS user/role with permissions listed in the file [permissions.json](./permissions.json).
 - An AWS Bucket (preferable in the region that the deployment will be performed).
-- AWS cli installed and configured in a local machine.
+- `aws cli` installed and configured in a local machine.
 
 ### Deployment Steps
 
