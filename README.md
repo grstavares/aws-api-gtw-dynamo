@@ -1,11 +1,9 @@
-# Programming task for Cloud Developers
+# Functionless AWS API Gateway Integration
 
-Create a simple API that provides CRUD (Create, Read, Update, Delete) operations for a simple TODO object. The API should be implemented
-using AWS Services and accessible via a public URL. For testing purposes, an AWS account can be created for free to implement the task.
+A simple API that provides CRUD (Create, Read, Update, Delete) operations for a simple TODO object.  
+For the POC, there is no need for user authorization, but the interface should be as scalable as possible.
 
-There is no need for user authorization, but the interface should be as scalable as possible.
-
-For a detailed API description, please copy the content of the attached [openapi.yml](./openapi.yml) file and paste it on [https://editor.swagger.io/](https://editor.swagger.io/).
+For a detailed API description, open the [openapi.yaml](./openapi.yaml) file on [https://editor.swagger.io/](https://editor.swagger.io/).
 
 ## API Specification
 
@@ -59,16 +57,3 @@ For a detailed API description, please copy the content of the attached [openapi
 - in your local machine, export the variable `stackname` with the name to be used during the stack creation.
 - run the script `./deploy.sh`
 - the script will print the `url` to be used to test the challenge.
-
-## Change Log
-
-- [c3c32d0](https://github.com/grstavares/SDA/commit/c3c32d02eda4f5fdaf7476ba560a83356d2aa29a): Add Challenge Files to Repo
-- [dc3b30b](https://github.com/grstavares/SDA/commit/dc3b30b927dc9dcab6e8428a3708877e877966ae): Adjust Path Prefix (\*1)
-- [efc527b](https://github.com/grstavares/SDA/commit/efc527bf7d3962ab4d442c650a46d544f75c25f8): Add Cloudformation Deployment Files
-- [5d1f978](5d1f9786181ff9878179f69d95f0f5db67b48bad): Return 404 response when the record is not found.
-- [6dbff96](https://github.com/grstavares/SDA/commit/6dbff96ff885e72b0dc28cd8238047483c4b1fff): Add deployment permissions requirements.
-
-(\*1): The specification requires that the paths are prefixed with the `v1` resource path.  
-The AWS API Gateway supports versioning in what is called a [`Stage`](https://docs.aws.amazon.com/apigateway/latest/developerguide/set-up-stages.html).  
-The `Stage` is also a required component for AWS API Gateway REST apis.  
-For that reason, we removed the `v1` prefix from the `OpenAPI` definition and used it as part of the REST API resource definition at [resources.yaml](https://github.com/grstavares/SDA/blob/d6c7e2784f12fd40706d0282c1c81c27d58db033/resources.yaml#L52).
