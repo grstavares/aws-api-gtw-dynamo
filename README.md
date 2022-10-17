@@ -1,4 +1,4 @@
-# Functionless AWS API Gateway Integration
+# Functionless CRUD Application
 
 A simple API that provides CRUD (Create, Read, Update, Delete) operations for a simple TODO object.  
 For the POC, there is no need for user authorization, but the interface should be as scalable as possible.
